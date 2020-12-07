@@ -14,6 +14,6 @@ func InitializeAuthService() *service.AuthService {
 	wire.Build(
 		service.NewAuthService,
 		repository.RepositorySet,
-		)
+	)
 	return &service.AuthService{}
 }

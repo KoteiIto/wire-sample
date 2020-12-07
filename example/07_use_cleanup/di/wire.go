@@ -15,6 +15,6 @@ func InitializeAuthService() (*service.AuthService, func()) {
 		service.NewAuthServiceWithCleanup,
 		repository.NewOnetimeTokenRepository,
 		repository.NewUserRepository,
-		)
+	)
 	return &service.AuthService{}, func() {}
 }

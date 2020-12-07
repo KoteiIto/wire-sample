@@ -2,18 +2,19 @@ package service
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/KoteiIto/wire-sample/pkg/repository"
 )
 
 type AuthenticateInput struct {
-	Email string
+	Email    string
 	Password string
 }
 
 type AuthenticateOutput struct {
-	UserId int64
+	UserId       int64
 	OnetimeToken string
 }
 
@@ -22,7 +23,7 @@ type IAuthService interface {
 }
 
 type AuthService struct {
-	userRepository repository.IUserRepository
+	userRepository         repository.IUserRepository
 	onetimeTokenRepository repository.IOnetimeTokenRepository
 }
 
@@ -31,7 +32,7 @@ var _ IAuthService = (*AuthService)(nil)
 func NewAuthService(
 	userRepository *repository.UserRepository,
 	onetimeTokenRepository *repository.OnetimeTokenRepository,
-	) *AuthService {
+) *AuthService {
 	return &AuthService{
 		userRepository:         userRepository,
 		onetimeTokenRepository: onetimeTokenRepository,
@@ -62,12 +63,22 @@ func NewAuthServiceWithCleanup(
 }
 
 func (s *AuthService) Authenticate(ctx context.Context, input *AuthenticateInput) (*AuthenticateOutput, error) {
+	user, err := s.userRepository.FindByEmail(ctx, input.Email)
+	if err != nil {
+		return nil, err
+	}
+
+	if input.Password != user.Password {
+		return nil, errors.New("passwordが一致しません")
+	}
+
+	token, err := s.onetimeTokenRepository.Issue(user)
+	if err != nil {
+		return nil, err
+	}
 
 	return &AuthenticateOutput{
-		UserId:       0,
-		OnetimeToken: "",
+		UserId:       user.UserId,
+		OnetimeToken: token,
 	}, nil
 }
-
-
-
