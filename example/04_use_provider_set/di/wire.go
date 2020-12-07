@@ -1,7 +1,7 @@
 // Provider Setを利用する
 //+build wireinject
 
-package main
+package di
 
 import (
 	"github.com/google/wire"

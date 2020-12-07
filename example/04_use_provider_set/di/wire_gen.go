@@ -3,7 +3,7 @@
 //go:generate wire
 //+build !wireinject
 
-package main
+package di
 
 import (
 	"github.com/KoteiIto/wire-sample/pkg/repository"
